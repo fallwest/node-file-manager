@@ -1,23 +1,24 @@
+# Intro
+This is a modified version of [node-file-manager](https://github.com/efeiefei/node-file-manager) with integrations for working with [behave-gui](https://github.com/behave-contrib/behave-gui).
 # Screen Shot
-![screenshot](https://raw.githubusercontent.com/efeiefei/node-file-manager/master/example/screenshot.png)
+![screenshot](screenshot.png)
+
+# Config
+To fill the `target` and `sw` dropdown lists, this fork of [node-file-manager](https://github.com/efeiefei/node-file-manager) looks for three folders under the served Behave root directory (the one specified with the `-d` argument, see 'Usage', below). So, under for example C:\\Users\\user\\git\\behave_home_dir\\features, we should ensure the following folders are present:
+```
+api/config/machines
+api/config/machines/project
+api/config/setups
+```
+The `setups` folder fills the software dropdown.
 
 # Usage
 
 ```sh
-  npm install -g node-file-manager
-  node-file-manager -p 8080 -d /path/to/
-```
-
-Or
-
-```sh
-  git clone https://github.com/efeiefei/node-file-manager.git
+  git clone https://github.com/fallwest/node-file-manager.git
   cd node-file-manager
   npm i
-  cd lib
-  node --harmony index.js -p 8080 -d /path/to
+  node ./lib/index.js -p 8092 -d C:\\Users\\user\\git\\behave_home_dir\\features
 ```
 
-We can run node-file-manager in terminal directly. We can specify prot add data root dir by `-p` and `-d`, default with 5000 and scripts directory.
-
-Then, we can view localhost:8080/ in our browr.
+Then, we can view localhost:8092/ in our browser.

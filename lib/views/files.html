@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>File Manager</title>
+  <title>Behave feature navigator</title>
 
-  <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-  <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
-  <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  <script src="//cdn.bootcss.com/angular.js/1.4.5/angular.min.js"></script>
+  <link href="script/bootstrap.min.css" rel="stylesheet">
+  <link href="script/local.css" rel="stylesheet">
+  <script src="script/jquery.min.js"></script>
+  <script src="script/bootstrap.min.js"></script>
+  <script src="script/angular.min.js"></script>
   <script src="js/angular-file.js"></script>
   <script src="js/app.js"></script>
-
   <style type="text/css">
-    .sortable {
+    .clickable {
       cursor: pointer;
     }
   </style>
@@ -43,7 +43,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h4>Upload File - Just for small file now</h4>
+          <h4>Upload File - for small files only</h4>
         </div>
         <div class="modal-body">
           <p>Upload to {{FM.curFolderPath + FM.uploadFile.name}}</p>
@@ -93,6 +93,27 @@
     </div>
   </div>
 
+
+  <div class="modal fade" id="createFeatureModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Create New Feature</h4>
+        </div>
+        <div class="modal-body">
+          <label class="control-label">New Feature Name</label>
+          <input class="form-control" autofocus ng-model="FM.newFeatureName" placeholder="new_name.feature" />
+          <p><b>Note:</b>&nbsp;feature name must end with ".feature"</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!FM.newFeatureName.endsWith('.feature')" ng-click="FM.create(FM.newFeatureName)">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <div class="modal fade" id="archiveModal">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -116,7 +137,7 @@
   <nav class="navbar navbar-default navbar-static-top">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">File Manager</a>
+        <a class="navbar-brand" href="#">Behave feature navigator</a>
       </div>
     </div>
   </nav>
@@ -127,19 +148,43 @@
       <button type="button" class="btn btn-default" ng-disabled="FM.btnDisabled('delete')" ng-click="FM.delete()"><span class="glyphicon glyphicon-remove"></span> Delete</button>
       <button type="button" class="btn btn-default" ng-disabled="FM.btnDisabled('move')" data-toggle="modal" data-target="#moveModal"><span class="glyphicon glyphicon-random"></span> Move</button>
       <button type="button" class="btn btn-default" ng-disabled="FM.btnDisabled('rename')" data-toggle="modal" data-target="#renameModal"><span class="glyphicon glyphicon-font"></span> Rename</button>
-      <button type="button" class="btn btn-default" ng-disabled="FM.btnDisabled('archive')" data-toggle="modal" data-target="#archiveModal" ng-click="FM.updateArchiveName()"><span class="glyphicon glyphicon-download-alt"></span> Archive</button>
-      <button type="button" class="btn btn-default pull-right" ng-disabled="FM.btnDisabled('create_folder')" data-toggle="modal" data-target="#createFolderModal"><span class="glyphicon glyphicon-plus-sign"></span> New Folder</button>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Target <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li ng-repeat="cf in FM.configFiles track by $index | orderBy:'name'"><a href="" ng-click="FM.setList($event, 'target')">{{cf.name.replace('.properties', '')}}</a></li>
+        </ul>
+      </div>
+      <div class="btn-group" role="group">
+        <span id="target" style="font-size: 18px;display: inline-block;" class="label label-primary">-- no target --</span>
+      </div>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Soft <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li ng-repeat="sw in FM.setupFiles track by $index | orderBy:'-name'"><a href="" ng-click="FM.setList($event, 'sw')">{{sw.name.replace('.properties', '')}}</a></li>
+        </ul>
+      </div>
+      <div class="btn-group" role="group">
+        <span id="sw" style="font-size: 18px;display: inline-block;" class="label label-primary">-- no software --</span>
+      </div>
+      <!-- <button type="button" class="btn btn-default" ng-disabled="FM.btnDisabled('archive')" data-toggle="modal" data-target="#archiveModal" ng-click="FM.updateArchiveName()"><span class="glyphicon glyphicon-download-alt"></span> Archive</button> -->
+      <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#createFeatureModal"><span class="glyphicon glyphicon-plus-sign"></span> Feature</button>
       <button type="button" class="btn btn-default pull-right" ng-disabled="FM.btnDisabled('upload_file')" data-toggle="modal" data-target="#uploadFileModal"><span class="glyphicon glyphicon-upload"></span> Upload</button>
+      <button type="button" class="btn btn-default pull-right" ng-disabled="FM.btnDisabled('create_folder')" data-toggle="modal" data-target="#createFolderModal"><span class="glyphicon glyphicon-plus-sign"></span> Folder</button>
     </div>
 
     <ol class="breadcrumb">
       <span class="glyphicon glyphicon-home"></span>
-      <li ng-repeat="p in FM.curBreadCrumbPaths"><a href={{p.path}}>{{p.name}}</a></li>
+      <li ng-repeat="p in FM.curBreadCrumbPaths"><a href={{p.path}} data-ng-click="clearSearch()">{{p.name}}</a></li>
     </ol>
-
-    <table class="table table-hover table-striped">
+  <div class="btn-group" style="float : right">
+    <input type="text" ng-model="searchText" placeholder="Search..">
+    <span id="searchclear" class="glyphicon glyphicon-remove-circle" data-ng-click="clearSearch()"></span>
+  </div>
+    <table id="fileTable" class="table table-hover table-striped">
       <thead>
-        <tr class="sortable">
+        <tr>
           <th><input type="checkbox" value="" ng-model="FM.selectAll"></th>
           <th>Type</th>
           <th>Name</th>
@@ -148,10 +193,10 @@
         </tr>
       </thead>
       <tbody>
-      <tr class="sortable" ng-repeat="file in FM.curFiles | orderBy:'folder'">
+      <tr ng-repeat="file in FM.curFiles | filter:searchText | orderBy:['-folder', 'name']">
         <td><input type="checkbox" value="{{file.name}}" ng-model="file.selected"></td>
-        <td ng-click="FM.clickFile(file)"><span class="{{file.folder ? 'glyphicon glyphicon-folder-open' : 'glyphicon glyphicon-file'}}"></span></td>
-        <td ng-click="FM.clickFile(file)"><a>{{file.name}}</a></td>
+        <td class="clickable" ng-click="FM.clickFile(file)"><span class="{{file.folder ? 'glyphicon glyphicon-folder-open' : 'glyphicon glyphicon-file'}}"></span></td>
+        <td class="clickable" ng-click="FM.clickFile(file)"><a class="{{FM.getHighlight(file.name)}}" data-ng-click="file.folder && clearSearch()">{{file.name}}</a></td>
         <td>{{file.humanSize}}</td>
         <td>{{file.humanTime}}</td>
       </tr>

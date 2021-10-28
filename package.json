@@ -1,10 +1,10 @@
 {
-  "name": "node-file-manager",
+  "name": "behave-feature-manager",
   "version": "0.4.6",
   "description": "File manager web based on Koa and Angular.js",
   "main": "index.js",
   "scripts": {
-    "start": "node --harmony ./lib/index.js"
+    "start": "node ./lib/index.js -p 8092 -d C:\\Users\\user\\git\\behave_home_dir\\features"
   },
   "bin": {
     "node-file-manager": "../node-file-manager/bin/node-file-manager.sh"
@@ -27,18 +27,6 @@
     "optimist": "^0.6.1",
     "tracer": "^0.8.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/efeiefei/node-file-manager.git"
-  },
-  "keywords": [
-    "files",
-    "manager",
-    "koa",
-    "angular",
-    "web",
-    "server"
-  ],
   "author": {
     "name": "efei",
     "email": "efeigm@gmail.com"
