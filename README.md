@@ -8,9 +8,10 @@ To fill the `target` and `sw` dropdown lists, this fork of [node-file-manager](h
 ```
 api/config/machines
 api/config/machines/project
+
 api/config/setups
 ```
-The `setups` folder fills the software dropdown.
+The 2 `machines` folders fill the `Target`dropdown, while the `setups` folder fills the `Soft` dropdown.
 
 # Usage
 
